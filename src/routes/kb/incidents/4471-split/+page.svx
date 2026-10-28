@@ -2,7 +2,7 @@
 layout: runbook
 title: '#4471 split · three date problems, three tickets'
 owner: jakubsob
-status: proposed
+status: open
 reviewed: 2026-10-28
 signature: v1.eyJzdWIiOiIyMTQyIiwiYXVkIjoiY2hhbGxlbmdlOndoYXQtaXQtc2hvd3MiLCJpYXQiOjE3OTMxODE5NTUsImV4cCI6MTc5MzI2ODM1NX0.-PIL46HM4rxT0Y9JDhdTZEw9xRpWnfLCqauiAhNsps8
 ---
@@ -25,7 +25,7 @@ ticket.
 <ProblemTable ticket={4471} {tickets} />
 
 - **`parser`** — the shared parser reads every date month first. A tenant that writes the day
-  first gets day and month swapped: 7 April comes out as 4 July. This is the fix that is queued.
+  first gets day and month swapped: 7 April comes out as 4 July. Fixed on 5 October.
 - **`hint`** — booking-v3's form prints `MM/DD/YYYY` under its date field. People at a day-first
   tenant type what the hint says, and the form reads it the tenant's way. The parser fix does not
   touch it: the form has to print the tenant's order.
@@ -50,11 +50,15 @@ show up under all three problems. Merging on subject alone (decision 0001) is ho
 problems ended up as one ticket marked known.
 </Callout>
 
-## What to do next
+## Outcome
 
-1. Keep the queued parser fix on the `parser` ticket. It closes that problem only.
-2. Change booking-v3's date hint to the tenant's order.
-3. Find where an invite's date crosses time zones.
-4. New date reports: place them by tenant and body, then merge into the ticket of their problem.
+Engineering closed #4471 on 5 October:
+
+- **`parser`** — fixed: `fix(dates): parse dd/mm for eu locales`. Ticket closed as done.
+- **`hint`** — won't fix: the booking-v3 form is retired. Ticket closed as not planned.
+- **`one-day`** — not covered by either. Its ticket stays open until someone finds where an
+  invite's date crosses time zones.
+
+New date reports: place them by tenant and body, then merge into the ticket of their problem.
 
 <RenderStamp {signature} />
