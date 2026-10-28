@@ -32,14 +32,16 @@ ticket.
 - **`one-day`** — the date moves by one day, not by a swap: Tuesday becomes Monday, one client in
   Lisbon and one in Toronto see different days for the same meeting, an invite arrives before the
   booking. That is a time zone problem, not a parser problem. The desk had already marked these
-  reports (`desk-notes.json`) but filed them under `parser` by tenant.
+  reports (`desk-notes.json`); its view still counts them under `parser` by tenant, so they are
+  counted there too.
 
 ## How they were counted
 
 - One id, one report: the export repeats some reports across pages (`uniqueById`).
-- The problem comes from the tenant's locale and form (`causes.ts`) and, for a one-day move, from
-  what the report says. Never from `intakeTag`: intake guessed from the reporter's browser and
-  disagrees with the tenant on dozens of these reports.
+- Counts are the desk's own view, as exported: the cause comes from the tenant's locale and form
+  (`causes.ts`). Never from `intakeTag`: intake guessed from the reporter's browser and disagrees
+  with the tenant on dozens of these reports.
+- A one-day move comes from what the report says (`desk-notes.json`).
 - Every count above is computed from `reports-4471.json` at render time.
 
 <Callout kind="warn">
