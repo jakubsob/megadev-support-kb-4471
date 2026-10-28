@@ -1,0 +1,58 @@
+---
+layout: runbook
+title: '#4471 split · three date problems, three tickets'
+owner: jakubsob
+status: proposed
+reviewed: 2026-10-28
+signature: v1.eyJzdWIiOiIyMTQyIiwiYXVkIjoiY2hhbGxlbmdlOndoYXQtaXQtc2hvd3MiLCJpYXQiOjE3OTMxODE5NTUsImV4cCI6MTc5MzI2ODM1NX0.-PIL46HM4rxT0Y9JDhdTZEw9xRpWnfLCqauiAhNsps8
+---
+
+<script>
+  import ProblemTable from '#lib/kb/ProblemTable.svelte';
+  import Callout from '#lib/kb/Callout.svelte';
+  import RenderStamp from '#lib/kb/RenderStamp.svelte';
+
+  const repo = 'https://github.com/jakubsob/megadev-support-kb-4471/issues';
+  const tickets = { parser: `${repo}/1`, hint: `${repo}/2`, 'one-day': `${repo}/3` };
+</script>
+
+[#4471](/kb/incidents/4471) says one issue, one fix. Its own cause table says otherwise. Read by
+tenant, booking form and body, the reports in #4471 hold three problems. Each one now has its own
+ticket.
+
+## The problems
+
+<ProblemTable ticket={4471} {tickets} />
+
+- **`parser`** — the shared parser reads every date month first. A tenant that writes the day
+  first gets day and month swapped: 7 April comes out as 4 July. This is the fix that is queued.
+- **`hint`** — booking-v3's form prints `MM/DD/YYYY` under its date field. People at a day-first
+  tenant type what the hint says, and the form reads it the tenant's way. The parser fix does not
+  touch it: the form has to print the tenant's order.
+- **`one-day`** — the date moves by one day, not by a swap: Tuesday becomes Monday, one client in
+  Lisbon and one in Toronto see different days for the same meeting, an invite arrives before the
+  booking. That is a time zone problem, not a parser problem. The desk had already marked these
+  reports (`desk-notes.json`) but filed them under `parser` by tenant.
+
+## How they were counted
+
+- One id, one report: the export repeats some reports across pages (`uniqueById`).
+- The problem comes from the tenant's locale and form (`causes.ts`) and, for a one-day move, from
+  what the report says. Never from `intakeTag`: intake guessed from the reporter's browser and
+  disagrees with the tenant on dozens of these reports.
+- Every count above is computed from `reports-4471.json` at render time.
+
+<Callout kind="warn">
+A matching subject is not the same problem. #4471 holds a dozen different subjects, and five of them
+show up under all three problems. Merging on subject alone (decision 0001) is how three
+problems ended up as one ticket marked known.
+</Callout>
+
+## What to do next
+
+1. Keep the queued parser fix on the `parser` ticket. It closes that problem only.
+2. Change booking-v3's date hint to the tenant's order.
+3. Find where an invite's date crosses time zones.
+4. New date reports: place them by tenant and body, then merge into the ticket of their problem.
+
+<RenderStamp {signature} />
